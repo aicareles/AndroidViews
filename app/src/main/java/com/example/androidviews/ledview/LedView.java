@@ -16,13 +16,13 @@ public class LedView extends View {
     private static final String TAG = "LedView";
     private int widthCount;//宽的点个数(36,48,56)
     private int heightCount;//高的点个数(5,12,14)
-    int widthSize;//宽
-    int heightSize;//高
+    private int widthSize;//宽
+    private int heightSize;//高
     private int pointAllLength;//点整体边长
     private int pointMargin = 1;//点的边距
     private int pointLength;//点边长
     private int offset;//x,y轴上偏移量
-    int moveMax;//可移动最大值
+    private int moveMax;//可移动最大值
     private int unSelectedColor = Color.parseColor("#252525");//没选中颜色
     private int selectedColor = Color.parseColor("#62ff3c");//选中颜色
 
@@ -46,12 +46,11 @@ public class LedView extends View {
 
     private static final float MAX_SCALE = 4.0F;
     private static final float MIN_SCALE = 1.0F;
-    float x = 1, y = 1;
-    double now = 0;
+    private float x = 1, y = 1;
+    private double now = 0;
     private byte[] data;
     private final RectF rectFBuffer = new RectF();
     private Paint paint;
-    private float[] matrixValues = new float[9];
 
     public LedView(Context context) {
         super(context);
