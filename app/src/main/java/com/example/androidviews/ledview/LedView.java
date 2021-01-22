@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 public class LedView extends View {
@@ -49,6 +50,7 @@ public class LedView extends View {
     private float x = 1, y = 1;
     private double now = 0;
     private byte[] data;
+    private int[] color;
     private final RectF rectFBuffer = new RectF();
     private Paint paint;
 
@@ -64,6 +66,11 @@ public class LedView extends View {
         super(context, attrs, defStyleAttr);
     }
 
+    class ItemView {
+        boolean isSelected;
+        int selectedColor;
+    }
+
     //宽点阵数，高点阵数
     public void init(int widthCount, int heightCount, float strokeWidth) {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -72,7 +79,9 @@ public class LedView extends View {
 
         this.widthCount = widthCount;
         this.heightCount = heightCount;
-        data = new byte[getTotalCount()];
+        int totalCount = getTotalCount();
+        data = new byte[totalCount];
+        color = new int[totalCount];
         invalidate();
     }
 
@@ -89,7 +98,7 @@ public class LedView extends View {
         }
         for (int i = 0; i < totalCount; i++) {
             if (data[i] == 1) {
-                paint.setColor(selectedColor);
+                paint.setColor(color[i]);
             } else {
                 paint.setColor(unSelectedColor);
             }
@@ -245,12 +254,15 @@ public class LedView extends View {
                     if (0 <= whichChildView && whichChildView < getTotalCount()) {
                         if (mode == MODE_PAINT) {
                             data[whichChildView] = 1;
+                            color[whichChildView] = selectedColor;
                             if (mirrorMode == MIRROR_HORIZONTAL) {//水平（行变化   列不变）
                                 int which = (heightCount - whichRow) * widthCount + whichColumn;
                                 data[which] = 1;
+                                color[which] = selectedColor;
                             } else if (mirrorMode == MIRROR_VERTICAL) {
                                 int which = whichRow * widthCount + (widthCount - whichColumn);
                                 data[which] = 1;
+                                color[which] = selectedColor;
                             }
                             invalidate();
                         } else if (mode == MODE_ERASER) {
@@ -388,4 +400,20 @@ public class LedView extends View {
     public interface ScaleCallback {
         void onScale(float scale);
     }
+
+    public void setData(int[] colors) {
+        if (colors == null) return;
+        int childCount = getTotalCount();
+        if (colors.length != childCount) return;
+        this.color = colors;
+        for (int i = 0; i < childCount; i++) {
+            data[i] = 1;
+        }
+        invalidate();
+    }
+
+    public int[] getData(){
+        return color;
+    }
+
 }
